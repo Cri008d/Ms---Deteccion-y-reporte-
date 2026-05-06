@@ -8,20 +8,26 @@ import com.example.demo.factory.ReporteFactory;
 import com.example.demo.model.ReporteDTO;
 import com.example.demo.model.ReporteIncendio;
 import com.example.demo.repository.ReporteRepository;
+import com.example.demo.validator.ReporteValidator;
 
 @Service
 public class ReporteService {
 
     private final ReporteRepository repository;
     private final ReporteFactory factory;
+    private final ReporteValidator validator; // Inyectamos el validador
 
-    public ReporteService(ReporteRepository repository, ReporteFactory factory) {
+    public ReporteService(ReporteRepository repository, ReporteFactory factory, ReporteValidator validator) {
         this.repository = repository;
         this.factory = factory;
+        this.validator = validator;
     }
 
     public ReporteIncendio guardarNuevoReporte(ReporteDTO dto) {
-        // Usa la fábrica para crear y el repositorio para guardar
+        //  Validamos los datos primero
+        validator.validar(dto);
+
+        //  Si pasa la validación, armamos el objeto y lo guardamos
         ReporteIncendio reporteArmado = factory.crearDesdeDTO(dto);
         return repository.save(reporteArmado);
     }
@@ -30,3 +36,4 @@ public class ReporteService {
         return repository.findAll();
     }
 }
+
