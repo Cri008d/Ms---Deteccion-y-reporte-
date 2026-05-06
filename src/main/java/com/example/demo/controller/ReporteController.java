@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,7 @@ import com.example.demo.model.ReporteIncendio;
 import com.example.demo.service.ReporteService;
 
 @RestController
-@RequestMapping("/api/reportes") // Ruta personalizada para tu API DR
+@RequestMapping("/api/reportes")
 public class ReporteController {
 
     private final ReporteService service;
@@ -25,9 +27,16 @@ public class ReporteController {
     }
 
     @PostMapping
-    public ResponseEntity<ReporteIncendio> crear(@RequestBody ReporteDTO request) {
-        ReporteIncendio guardado = service.guardarNuevoReporte(request);
-        return new ResponseEntity<>(guardado, HttpStatus.CREATED);
+    public ResponseEntity<?> crear(@RequestBody ReporteDTO request) {
+        try {
+            ReporteIncendio guardado = service.guardarNuevoReporte(request);
+            return new ResponseEntity<>(guardado, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            // Si el validador falla, devolvemos un JSON con el mensaje de error
+            Map<String, String> respuestaError = new HashMap<>();
+            respuestaError.put("error", e.getMessage());
+            return new ResponseEntity<>(respuestaError, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping
