@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +17,8 @@ import com.example.demo.service.ReporteService;
 
 @RestController
 @RequestMapping("/api/reportes") // Ruta personalizada para tu API DR
+@CrossOrigin(origins = "http://localhost:5173")
+
 public class ReporteController {
 
     private final ReporteService service;
