@@ -7,33 +7,37 @@ import org.springframework.stereotype.Service;
 import com.example.demo.factory.ReporteFactory;
 import com.example.demo.model.ReporteDTO;
 import com.example.demo.model.ReporteIncendio;
+import com.example.demo.model.Usuario;
 import com.example.demo.repository.ReporteRepository;
-import com.example.demo.validator.ReporteValidator;
+import com.example.demo.repository.UsuarioRepository;
 
 @Service
 public class ReporteService {
 
-    private final ReporteRepository repository;
-    private final ReporteFactory factory;
-    private final ReporteValidator validator; // Inyectamos el validador
+    private ReporteRepository reporteRepository; 
+    private UsuarioRepository usuarioRepository;
 
-    public ReporteService(ReporteRepository repository, ReporteFactory factory, ReporteValidator validator) {
-        this.repository = repository;
-        this.factory = factory;
-        this.validator = validator;
+    public ReporteService(ReporteRepository reporteRepository, UsuarioRepository usuarioRepository) {
+        this.reporteRepository = reporteRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     public ReporteIncendio guardarNuevoReporte(ReporteDTO dto) {
-        //  Validamos los datos primero
-        validator.validar(dto);
+    // Buscamos al usuario por el email que viene en el DTO
+    Usuario usuario = usuarioRepository.findByCorreo(dto.getCorreoUsuario())
+        .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
-        //  Si pasa la validación, armamos el objeto y lo guardamos
-        ReporteIncendio reporteArmado = factory.crearDesdeDTO(dto);
-        return repository.save(reporteArmado);
-    }
+    
+    ReporteIncendio nuevoReporte = ReporteFactory.crearReporte(dto);
+    
+    // Establecemos la relación
+    nuevoReporte.setUsuario(usuario);
+
+    return reporteRepository.save(nuevoReporte);
+}
 
     public List<ReporteIncendio> listarTodos() {
-        return repository.findAll();
+        return reporteRepository.findAll();
     }
 }
 
