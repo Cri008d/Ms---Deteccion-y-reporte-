@@ -1,6 +1,6 @@
 package com.example.demo.factory;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
@@ -10,16 +10,12 @@ import com.example.demo.model.ReporteIncendio;
 @Component
 public class ReporteFactory {
 
-    public ReporteIncendio crearDesdeDTO(ReporteDTO dto) {
+    public static ReporteIncendio crearReporte(ReporteDTO dto) {
         ReporteIncendio reporte = new ReporteIncendio();
         reporte.setLatitud(dto.getLatitud());
         reporte.setLongitud(dto.getLongitud());
         reporte.setTipoIncendio(dto.getTipoIncendio());
-        
-        // Datos que el sistema asigna automáticamente
-        reporte.setEstado("PENDIENTE");
-        reporte.setFechaReporte(Instant.now());
-        
+        reporte.setFechaReporte(LocalDateTime.now());
         return reporte;
     }
 }
