@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.example.demo.model.Usuario;
 import com.example.demo.repository.UsuarioRepository;
 
+
+
 @Service
 public class UsuarioService {
 
