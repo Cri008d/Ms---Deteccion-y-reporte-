@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reportes")
@@ -18,9 +18,22 @@ public class ReporteIncendio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @Column(nullable = false)
     private Double latitud;
+
+    @Column(nullable = false)
     private Double longitud;
-    private String tipoIncendio; 
+
+    @Column(nullable = false)
+    private String tipoIncendio;
+    
+    @Column(nullable = false)
     private String estado;
-    private Instant fechaReporte;
+
+    @Column(nullable = false)
+    private LocalDateTime fechaReporte;
+
+    @ManyToOne 
+    @JoinColumn(name = "usuario_id") 
+    private Usuario usuario;
 }
