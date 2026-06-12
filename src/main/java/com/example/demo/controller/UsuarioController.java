@@ -1,6 +1,9 @@
 package com.example.demo.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,10 +44,34 @@ public class UsuarioController {
         return (usuario != null) ? ResponseEntity.ok(usuario) : ResponseEntity.notFound().build();
     }
 
-    @PostMapping
+    @PostMapping("/registrar") 
     public ResponseEntity<Usuario> crear(@RequestBody Usuario usuario) {
         Usuario nuevoUsuario = usuarioService.guardar(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
+    }
+
+    @PostMapping("/login") // Escucha en: /api/v1/usuarios/login
+    public ResponseEntity<?> login(@RequestBody Usuario loginRequest) {
+        Usuario usuarioValido = usuarioService.obtenerTodos().stream()
+                .filter(u -> u.getCorreo().equalsIgnoreCase(loginRequest.getCorreo()))
+                .findFirst()
+                .orElse(null);
+
+        if (usuarioValido == null || !usuarioValido.getContraseña().equals(loginRequest.getContraseña())) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Credenciales inválidas. Correo o contraseña incorrectos.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
+
+        String tokenGenerado = "SESSION_TOKEN_" + UUID.randomUUID().toString().replace("-", "") + "_" + usuarioValido.getIdUsuario();
+
+        Map<String, String> successResponse = new HashMap<>();
+        successResponse.put("token", tokenGenerado);
+        successResponse.put("nombre", usuarioValido.getNombre());
+        successResponse.put("correo", usuarioValido.getCorreo());
+
+        // Devolvemos el JSON con código 200 OK
+        return ResponseEntity.ok(successResponse);
     }
     
     @PutMapping("/{id}")
