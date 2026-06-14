@@ -46,9 +46,22 @@ public class UsuarioController {
     }
 
     @PostMapping("/registrar") 
-    public ResponseEntity<Usuario> crear(@RequestBody Usuario usuario) {
-        Usuario nuevoUsuario = usuarioService.guardar(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
+    public ResponseEntity<?> crear(@RequestBody Usuario usuario) {
+        try {
+            Usuario nuevoUsuario = usuarioService.guardar(usuario);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
+            
+        } catch (IllegalArgumentException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage()); 
+            
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (Exception e) {
+            // Para cualquier otro error inesperado de la base de datos
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Error interno al registrar el usuario.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 
     @PostMapping("/login") // Escucha en: /api/v1/usuarios/login

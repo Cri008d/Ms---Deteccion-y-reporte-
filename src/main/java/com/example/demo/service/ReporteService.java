@@ -23,18 +23,15 @@ public class ReporteService {
     }
 
     public ReporteIncendio guardarNuevoReporte(ReporteDTO dto) {
-    // Buscamos al usuario por el email que viene en el DTO
-    Usuario usuario = usuarioRepository.findByCorreo(dto.getCorreoUsuario())
-        .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        Usuario usuario = usuarioRepository.findByCorreo(dto.getCorreoUsuario())
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
-    
-    ReporteIncendio nuevoReporte = ReporteFactory.crearReporte(dto);
-    
-    // Establecemos la relación
-    nuevoReporte.setUsuario(usuario);
+        ReporteIncendio nuevoReporte = ReporteFactory.crearReporte(dto);
+        
+        nuevoReporte.setUsuario(usuario);
 
-    return reporteRepository.save(nuevoReporte);
-}
+        return reporteRepository.save(nuevoReporte);
+    }
 
     public List<ReporteIncendio> listarTodos() {
         return reporteRepository.findAll();
