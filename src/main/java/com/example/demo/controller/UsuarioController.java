@@ -46,20 +46,25 @@ public class UsuarioController {
     }
 
     @PostMapping("/registrar") 
-    public ResponseEntity<?> crear(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> crear(@RequestBody Map<String, String> requestData) {
         try {
+
+            Usuario usuario = new Usuario();
+            usuario.setNombre(requestData.get("nombre"));
+            usuario.setCorreo(requestData.get("correo"));
+            usuario.setContraseña(requestData.get("contrasena")); 
+
+            // 2. Guardamos en la BD
             Usuario nuevoUsuario = usuarioService.guardar(usuario);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
             
         } catch (IllegalArgumentException e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", e.getMessage()); 
-            
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         } catch (Exception e) {
-            // Para cualquier otro error inesperado de la base de datos
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Error interno al registrar el usuario.");
+            errorResponse.put("message", "Error interno al registrar el usuario: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
