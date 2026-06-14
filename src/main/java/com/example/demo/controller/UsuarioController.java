@@ -64,28 +64,45 @@ public class UsuarioController {
         }
     }
 
-    @PostMapping("/login") // Escucha en: /api/v1/usuarios/login
-    public ResponseEntity<?> login(@RequestBody Usuario loginRequest) {
-        Usuario usuarioValido = usuarioService.obtenerTodos().stream()
-                .filter(u -> u.getCorreo().equalsIgnoreCase(loginRequest.getCorreo()))
-                .findFirst()
-                .orElse(null);
+    @PostMapping("/login") 
 
-        if (usuarioValido == null || !passwordEncoder.matches(loginRequest.getContraseña(), usuarioValido.getContraseña())) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
+        try {
+
+            String correoRecibido = loginRequest.get("correo");
+            String contrasenaRecibida = loginRequest.get("contrasena");
+
+            if (correoRecibido == null || contrasenaRecibida == null) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("message", "Faltan datos. Asegúrate de enviar correo y contrasena.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+
+            Usuario usuarioValido = usuarioService.obtenerTodos().stream()
+                    .filter(u -> u.getCorreo() != null && u.getCorreo().equalsIgnoreCase(correoRecibido))
+                    .findFirst()
+                    .orElse(null);
+
+            if (usuarioValido == null || !passwordEncoder.matches(contrasenaRecibida, usuarioValido.getContraseña())) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("message", "Credenciales inválidas. Correo o contraseña incorrectos.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+            }
+
+            String tokenGenerado = "SESSION_TOKEN_" + UUID.randomUUID().toString().replace("-", "") + "_" + usuarioValido.getIdUsuario();
+
+            Map<String, String> successResponse = new HashMap<>();
+            successResponse.put("token", tokenGenerado);
+            successResponse.put("nombre", usuarioValido.getNombre());
+            successResponse.put("correo", usuarioValido.getCorreo());
+
+            return ResponseEntity.ok(successResponse);
+            
+        } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Credenciales inválidas. Correo o contraseña incorrectos.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+            errorResponse.put("message", "Error interno del servidor: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
-
-        String tokenGenerado = "SESSION_TOKEN_" + UUID.randomUUID().toString().replace("-", "") + "_" + usuarioValido.getIdUsuario();
-
-        Map<String, String> successResponse = new HashMap<>();
-        successResponse.put("token", tokenGenerado);
-        successResponse.put("nombre", usuarioValido.getNombre());
-        successResponse.put("correo", usuarioValido.getCorreo());
-
-        // Devolvemos el JSON con código 200 OK
-        return ResponseEntity.ok(successResponse);
     }
     
     @PutMapping("/{id}")
