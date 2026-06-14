@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.model.Usuario;
 import com.example.demo.repository.UsuarioRepository;
+import com.example.demo.validator.UsuarioValidator;
 
 
 
@@ -28,9 +29,12 @@ public class UsuarioService {
     }
 
     public Usuario guardar(Usuario usuario) {
+        UsuarioValidator.validar(usuario);
+
         usuario.setContraseña(passwordEncoder.encode(usuario.getContraseña()));
         return usuarioRepository.save(usuario);
     }
+    
 
     public void eliminar(Integer id) {
         Usuario usuario = obtenerPorId(id);
