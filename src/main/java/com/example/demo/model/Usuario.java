@@ -29,7 +29,7 @@ public class Usuario {
     @Column(length = 40, nullable = false)
     private String correo;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 255, nullable = false)
     @JsonProperty("contrasena")
     private String contraseña;
 
