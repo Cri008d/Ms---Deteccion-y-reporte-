@@ -1,33 +1,27 @@
 package com.example.demo.validator;
 
-
-import org.springframework.stereotype.Component;
-
+import org.springframework.util.Assert;
 import com.example.demo.model.ReporteDTO;
 
-@Component
 public class ReporteValidator {
 
-    public void validar(ReporteDTO dto) {
-        // 1. Validar Tipo de Incendio
-        if (dto.getTipoIncendio() == null || dto.getTipoIncendio().trim().isEmpty()) {
-            throw new IllegalArgumentException("El tipo de incendio es obligatorio.");
-        }
+    public static void validar(ReporteDTO dto) {
+        Assert.notNull(dto, "El reporte no puede ser nulo");
 
-        // 2. Validar Latitud (Debe estar entre -90 y 90 grados)
-        if (dto.getLatitud() == null) {
-            throw new IllegalArgumentException("La latitud es obligatoria.");
-        }
-        if (dto.getLatitud() < -90.0 || dto.getLatitud() > 90.0) {
-            throw new IllegalArgumentException("La latitud debe estar entre -90 y 90.");
-        }
+        // Validar Tipo de Incendio
+        Assert.hasText(dto.getTipoIncendio(), "El tipo de incendio es obligatorio.");
 
-        // 3. Validar Longitud (Debe estar entre -180 y 180 grados)
-        if (dto.getLongitud() == null) {
-            throw new IllegalArgumentException("La longitud es obligatoria.");
-        }
-        if (dto.getLongitud() < -180.0 || dto.getLongitud() > 180.0) {
-            throw new IllegalArgumentException("La longitud debe estar entre -180 y 180.");
-        }
+        // Validar Latitud (
+        Assert.notNull(dto.getLatitud(), "La latitud es obligatoria.");
+        Assert.isTrue(dto.getLatitud() >= -90.0 && dto.getLatitud() <= 90.0, 
+            "La latitud debe estar entre -90 y 90.");
+
+        // Validar Longitud 
+        Assert.notNull(dto.getLongitud(), "La longitud es obligatoria.");
+        Assert.isTrue(dto.getLongitud() >= -180.0 && dto.getLongitud() <= 180.0, 
+            "La longitud debe estar entre -180 y 180.");
+
+        // Validar Correo (Para evitar que intenten buscar un usuario nulo en la BD)
+        Assert.hasText(dto.getCorreoUsuario(), "El correo del usuario es obligatorio para crear un reporte.");
     }
 }
