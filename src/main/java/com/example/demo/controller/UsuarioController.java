@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +29,8 @@ public class UsuarioController {
     
     @Autowired
     private UsuarioService usuarioService;
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @GetMapping
     public ResponseEntity<List<Usuario>> obtenerTodos() {
@@ -55,7 +58,7 @@ public class UsuarioController {
                 .findFirst()
                 .orElse(null);
 
-        if (usuarioValido == null || !usuarioValido.getContraseña().equals(loginRequest.getContraseña())) {
+        if (usuarioValido == null || !passwordEncoder.matches(loginRequest.getContraseña(), usuarioValido.getContraseña())) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Credenciales inválidas. Correo o contraseña incorrectos.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
