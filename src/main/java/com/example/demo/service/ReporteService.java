@@ -36,5 +36,11 @@ public class ReporteService {
     public List<ReporteIncendio> listarTodos() {
         return reporteRepository.findAll();
     }
+
+    public List<ReporteIncendio> listarPorCorreo(String correo) {
+    return reporteRepository.findByUsuarioCorreo(correo);
+}
+
+
 }
 
