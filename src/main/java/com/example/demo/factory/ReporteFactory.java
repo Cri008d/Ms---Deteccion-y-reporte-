@@ -16,6 +16,7 @@ public class ReporteFactory {
         reporte.setLongitud(dto.getLongitud());
         reporte.setTipoIncendio(dto.getTipoIncendio());
         reporte.setFechaReporte(LocalDateTime.now());
+        reporte.setEstado("Pendiente");
         return reporte;
     }
 }
