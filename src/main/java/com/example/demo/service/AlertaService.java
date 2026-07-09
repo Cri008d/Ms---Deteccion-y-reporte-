@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class AlertaService {
     private final RestTemplate restTemplate = new RestTemplate();
     
-    private final String NODE_SERVICE_URL = "http://localhost:3000/api/notificaciones/enviar-masivo";
+    private final String NODE_SERVICE_URL = "https://ms-notificaciones-api.onrender.com/api/notificaciones/enviar-masivo";
 
     public boolean difundirAlertaMasiva(AlertaMasivaDTO alerta) {
         try {
