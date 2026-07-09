@@ -1,8 +1,13 @@
 package com.example.demo.model;
 
+import lombok.Data;
+
+@Data
 public class AlertaMasivaDTO {
     private String asunto;
     private String mensaje;
+    private String latitud;   
+    private String longitud;
 
     // Constructores
     public AlertaMasivaDTO() {}
