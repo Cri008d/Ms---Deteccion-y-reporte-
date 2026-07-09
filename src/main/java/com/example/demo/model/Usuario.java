@@ -29,8 +29,8 @@ public class Usuario {
     @Column(length = 40, nullable = false)
     private String correo;
 
-    @Column(length = 15, nullable = false)
-    private String rol;
+    @Column(length = 15)
+    private String rol = "CIUDADANO";
 
     @Column(length = 255, nullable = false)
     @JsonProperty("contrasena")
