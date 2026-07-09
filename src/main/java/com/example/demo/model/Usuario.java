@@ -32,7 +32,7 @@ public class Usuario {
     @Column(length = 15)
     private String rol = "CIUDADANO";
 
-    @Column(name = "contrasena", length = 255, nullable = false) 
+    @Column(length = 255, nullable = false)
     @JsonProperty("contrasena")
     private String contraseña;
 
