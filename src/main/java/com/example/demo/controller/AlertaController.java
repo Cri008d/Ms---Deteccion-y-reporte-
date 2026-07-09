@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 @RequestMapping("/api/alertas")
-@CrossOrigin(origins = "*")
 public class AlertaController {
     @Autowired
     private AlertaService alertaService;
