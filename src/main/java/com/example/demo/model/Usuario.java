@@ -29,6 +29,9 @@ public class Usuario {
     @Column(length = 40, nullable = false)
     private String correo;
 
+    @Column(length = 15, nullable = false)
+    private String rol;
+
     @Column(length = 255, nullable = false)
     @JsonProperty("contrasena")
     private String contraseña;
