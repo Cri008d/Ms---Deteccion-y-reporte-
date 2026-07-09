@@ -1,47 +1,36 @@
 package com.example.demo.security;
 
-import java.util.Arrays;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
-import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
-import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration 
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) 
-            
-            // CONFIGURACIÓN DE CORS CORREGIDA PARA PERMITIR TOKENS
-            .cors(cors -> cors.configurationSource(request -> {
-                CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOrigins(Arrays.asList("*")); 
-                config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
-                return config;
-            }))
-            
-            .formLogin(form -> form.disable())
-            .httpBasic(basic -> basic.disable())
-            
-            .authorizeExchange(exchange -> exchange
-                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
-                .pathMatchers("/api/usuarios/login", "/api/usuarios/registrar").permitAll()   
-                .pathMatchers("/api/*/usuarios/login", "/api/*/usuarios/registrar").permitAll() 
-                .pathMatchers("/api/notificaciones/**").permitAll()
-                .pathMatchers("/api/alertas/**").permitAll()
-                .pathMatchers("/api/reportes", "/api/*/reportes").permitAll()
-                .anyExchange().authenticated() 
+            .csrf(AbstractHttpConfigurer::disable) 
+            .cors(cors -> cors.configure(http))    
+            .authorizeHttpRequests(auth -> auth
+                // Permitimos libre acceso a los endpoints clave del sistema
+                .requestMatchers("/api/v1/usuarios/**", "/api/alertas/**", "/api/reportes/**").permitAll() 
+                .anyRequest().permitAll() 
             );
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
