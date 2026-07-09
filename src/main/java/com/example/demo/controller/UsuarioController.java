@@ -100,6 +100,7 @@ public class UsuarioController {
             successResponse.put("token", tokenGenerado);
             successResponse.put("nombre", usuarioValido.getNombre());
             successResponse.put("correo", usuarioValido.getCorreo());
+            successResponse.put("rol", usuarioValido.getRol());
 
             return ResponseEntity.ok(successResponse);
             
