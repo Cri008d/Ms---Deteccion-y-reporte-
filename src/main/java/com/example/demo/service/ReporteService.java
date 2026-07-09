@@ -10,6 +10,7 @@ import com.example.demo.model.ReporteIncendio;
 import com.example.demo.model.Usuario;
 import com.example.demo.repository.ReporteRepository;
 import com.example.demo.repository.UsuarioRepository;
+import com.example.demo.validator.ReporteValidator;
 
 @Service
 public class ReporteService {
@@ -23,6 +24,8 @@ public class ReporteService {
     }
 
     public ReporteIncendio guardarNuevoReporte(ReporteDTO dto) {
+        ReporteValidator.validar(dto);
+
         Usuario usuario = usuarioRepository.findByCorreo(dto.getCorreoUsuario())
             .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
@@ -36,5 +39,11 @@ public class ReporteService {
     public List<ReporteIncendio> listarTodos() {
         return reporteRepository.findAll();
     }
+
+    public List<ReporteIncendio> listarPorCorreo(String correo) {
+    return reporteRepository.findByUsuarioCorreo(correo);
+}
+
+
 }
 

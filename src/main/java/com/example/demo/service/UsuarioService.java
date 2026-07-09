@@ -50,7 +50,10 @@ public class UsuarioService {
         if (usuarioE != null) {
             if (usuario.getNombre() != null) usuarioE.setNombre(usuario.getNombre());
             if (usuario.getCorreo() != null) usuarioE.setCorreo(usuario.getCorreo());
-            if (usuario.getContraseña() != null) usuarioE.setContraseña(usuario.getContraseña());
+
+            if (usuario.getContraseña() != null) {
+                usuarioE.setContraseña(passwordEncoder.encode(usuario.getContraseña()));
+            } 
             return usuarioRepository.save(usuarioE);
         }
         return null;

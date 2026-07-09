@@ -42,7 +42,12 @@ public class ReporteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ReporteIncendio>> listar() {
+    public ResponseEntity<List<ReporteIncendio>> listar(@org.springframework.web.bind.annotation.RequestParam(required = false) String correo) {
+
+        if (correo != null && !correo.isEmpty()) {
+            return ResponseEntity.ok(service.listarPorCorreo(correo));
+        }
+
         return ResponseEntity.ok(service.listarTodos());
     }
 }
