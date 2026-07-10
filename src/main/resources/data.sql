@@ -1,1 +1,0 @@
-UPDATE usuarios SET rol = 'FUNCIONARIO' WHERE correo = 'ben@gmail.com';
