@@ -23,7 +23,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configure(http))    
             .authorizeHttpRequests(auth -> auth
                 // Permitimos libre acceso a los endpoints clave del sistema
-                .requestMatchers("/api/v1/usuarios/**", "/api/alertas/**", "/api/reportes/**").permitAll() 
+                .requestMatchers("/api/v1/usuarios/**", "/api/alertas/**", "/api/reportes/**", "/api/reportes").permitAll() 
                 .anyRequest().permitAll() 
             );
         return http.build();
